@@ -55,33 +55,41 @@ This terminal we can leave in the background since we don't need to enter/change
 I took the project which is under "fabric-samples/chaincode/chaincode_example02/java" and added the following
 lines to the deployment section of the build.gradle script
 
-> compile 'ch.qos.logback:logback-classic:1.1.7'
-> compile 'org.slf4j:jcl-over-slf4j:1.7.21'
+```
+ compile 'ch.qos.logback:logback-classic:1.1.7'
+ compile 'org.slf4j:jcl-over-slf4j:1.7.21'
+```
 
 This lines ensure that there is a logger implementation and that all logs are centralized and outputted via logback-classic.
 
 Now we are able to build the shadow jar
 
+```
     $ ./gradlew clean shadowJar
     $ ls  build/libs/chaincode.jar
     build/libs/chaincode.jar
+```
 
 ### Terminal 2: Start the Chaincode
 Now we are ready to run our chaincode in the chaincode docker container (containing our new jre9 installed)
 
+```
     $ docker exec -e COLUMNS=151 -it chaincode bash
     $ CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=mycc:0 java -jar  build/libs/chaincode.jar
+```
+
 
 The java process in the chaincode docker container must be running all the time, while communication with the chaincode.
 
 We execute the *SimpleChaincode::main* method and assign it the *name=mycc* and the *version=0*.
 
-> Here is one open point to me:
-> why do we put CORE_PEER_ADDRESS=peer:7052?
-> In the file chaincode-docker-devmode/docker-compose-simple.yaml
-> the peer is configured with CORE_PEER_ADDRESS=7051
-> ==> But only this way it is working!
-
+```
+ Here is one open point to me:
+ why do we put CORE_PEER_ADDRESS=peer:7052?
+ In the file chaincode-docker-devmode/docker-compose-simple.yaml
+ the peer is configured with CORE_PEER_ADDRESS=7051
+ ==> But only this way it is working!
+```
 
 ### Terminal 3: Install and Instantiate the Chaincode
 Now we have the network running and also our chaincode running on on the ccenv docker image.
@@ -89,17 +97,21 @@ We need now to  install the chaincode and later instantiate the chaincode before
 #### Install the Chaincode
 Now we are ready to install the chaincode on the *cli* docker component.
 
+```
     $ docker exec -e COLUMNS=151 -it cli bash
     $ peer chaincode install -p chaincode/src/ -n mycc -v 0 -l java
     ...
     Installed remotely response:<status:200 payload:"OK" >
+```
 
 Here we are installing the chaincode and providing the *path=chaincode/src/*, the *name=mycc*, the *version=0* and the *language=java* to it.
 
 #### Instantiate Chaincode
 The very last step to make our chaincode ready is to instantiate ist.
 
+```
     peer chaincode instantiate -n mycc -v 0 -c '{"Args":["init","a","10","b","20"]}' -C myc
+```
 
 Here we are instantiating our chaincode with the *name=mycc*, the *version=0*, the *chaincodeID=myc* (this is hardcoded in the script.sh startup script of the *cli* docker container and is part of the pregenerated crypto material in this container) and the constructor arguments: {"Args":["init","a","10","b","20"]}.
 
