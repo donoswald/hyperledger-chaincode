@@ -4,16 +4,15 @@ import java.util.List;
 
 import com.google.protobuf.ByteString;
 import io.netty.handler.ssl.OpenSsl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SimpleChaincode extends ChaincodeBase {
-
-  private static Log _logger = LogFactory.getLog(SimpleChaincode.class);
+  private static final Logger _logger = LoggerFactory.getLogger(SimpleChaincode.class);
 
   @Override
   public Response init(ChaincodeStub stub) {
